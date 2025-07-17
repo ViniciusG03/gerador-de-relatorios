@@ -9,8 +9,7 @@ from docx.oxml.shared import OxmlElement, qn
 
 from .utils import resource_path
 
-
-# Document helpers
+# Métodos para moldar os templates
 
 def add_table_borders(table) -> None:
     for row in table.rows:
@@ -109,8 +108,7 @@ def add_signature_section(doc: Document, signature_type: str = "tipico"):
     doc.add_paragraph("Responsável técnica(o)").alignment = WD_ALIGN_PARAGRAPH.CENTER
     return p
 
-
-# Report generators
+# Geradores de relatórios templates
 
 def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
     try:

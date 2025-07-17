@@ -12,7 +12,7 @@ REQUIRED_COLUMNS = [
 
 
 def load_excel(path: str) -> pd.DataFrame:
-    """Load an Excel file and validate required columns."""
+    """Carrega um arquivo Excel e valida as colunas obrigatórias."""
     data = pd.read_excel(path)
     missing = [c for c in REQUIRED_COLUMNS if c not in data.columns]
     if missing:

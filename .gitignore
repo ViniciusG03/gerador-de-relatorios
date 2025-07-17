@@ -1,0 +1,13 @@
+/.idea
+/build
+/dist
+/GERADOR_FUSEX_v1.0/
+fusex_tipico.xlsx
+GERADOR_FUSEX_v1.0.zip
+Gerador_Relatorios_FUSEX_v1.0.spec
+papel timbrado.docx
+*.docx
+*.xlsx
+*.spec
+*.exe
+mainn.py

@@ -10,4 +10,6 @@ papel timbrado.docx
 *.xlsx
 *.spec
 *.exe
+__pycache__/
 mainn.py
+

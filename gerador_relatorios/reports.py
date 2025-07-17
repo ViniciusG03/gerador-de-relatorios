@@ -97,6 +97,17 @@ def add_specialty_section(
     if programming_text:
         add_section_text(doc, programming_text)
 
+def add_fixed_signature_section(
+        doc: Document,
+        text: str = "Brasília, data da assinatura digital.",
+        font_size: int = 12,
+        alignment: WD_ALIGN_PARAGRAPH = WD_ALIGN_PARAGRAPH.RIGHT,
+) -> None: 
+    """Insere uma linha fixa com cidade e texto de data nates da assinatura digital."""
+    p = doc.add_paragraph(text)
+    p.alignment = alignment
+    run = p.runs[0]
+    run.font.size = Pt(font_size)
 
 def add_signature_section(doc: Document, signature_type: str = "tipico"):
     doc.add_paragraph()
@@ -288,6 +299,8 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
         "necessário, respeitando os limites éticos da atuação clínica.",
     )
 
+    add_fixed_signature_section(doc, "Brasília, data da assinatura digital.")
+
     add_signature_section(doc, "pne")
 
     filename = f"Relatório_PNE_{patient_data['info']['nome'].replace(' ', '_')}.docx"
@@ -421,6 +434,8 @@ def generate_tipico_report(patient_data: Dict[str, Any], output_dir: str) -> Non
         "mostrado um espaço importante de escuta, acolhimento e construção de "
         "recursos para a promoção da saúde mental.",
     )
+
+    add_fixed_signature_section(doc, "Brasília, data da assinatura digital.")
 
     add_signature_section(doc, "tipico")
 

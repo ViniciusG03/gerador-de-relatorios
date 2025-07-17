@@ -6,8 +6,49 @@ from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.shared import OxmlElement, qn
+from math import ceil
+from docx.enum.table import WD_TABLE_ALIGNMENT
 
 from .utils import resource_path
+
+SIGNATURES: dict[str, list[tuple[str, dict[str, bool]]]] = {
+    "PSICOTERAPIA": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("SIMONE ULER LAVORATO", {"bold": True}),
+        ("Psicóloga", {}),
+        ("CRP 01/20631", {})
+    ],
+    "ABA": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("SIMONE ULER LAVORATO", {"bold": True}),
+        ("Psicóloga", {}),
+        ("CRP 01/20631", {})
+    ],
+    "TERAPIA OCUPACIONAL": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("WÊNIA CARVALHO TORRES", {"bold": True}),
+        ("Terapeuta Ocupacional", {}),
+        ("CREFITO 11-17626", {})
+    ],
+    "FONOAUDIOLOGIA": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("GABRIEL BORGES BATISTA", {"bold": True}),
+        ("Fonoaudiólogo", {}),
+        ("CRFa 5-13809", {})
+    ],
+    "PSICOMOTRICIDADE": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("SIMONE ULER LAVORATO", {"bold": True}),
+        ("Psicomotricista", {}),
+        ("CRP 01/20631", {})
+    ],
+    "PSICOPEDAGOGIA": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("SIMONE ULER LAVORATO", {"bold": True}),
+        ("Psicopedagoga", {}),
+        ("CRP 01/20631", {})
+    ],
+}
 
 # Métodos para moldar os templates
 
@@ -109,6 +150,7 @@ def add_fixed_signature_section(
     run = p.runs[0]
     run.font.size = Pt(font_size)
 
+# Depreciado, use `build_signature_block`.
 def add_signature_section(doc: Document, signature_type: str = "tipico"):
     doc.add_paragraph()
     p = doc.add_paragraph("_" * 50)
@@ -118,6 +160,63 @@ def add_signature_section(doc: Document, signature_type: str = "tipico"):
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_paragraph("Responsável técnica(o)").alignment = WD_ALIGN_PARAGRAPH.CENTER
     return p
+
+def build_signature_block_grid(
+    doc: Document,
+    specialties: list[str],
+    cols: int = 2,
+    font_size: int = 12
+) -> None:
+    """
+    Insere:
+      1) uma linha em branco
+      2) tabela com `cols` colunas e linhas suficientes para todas as especialidades,
+         preenchendo cada célula com o bloco de assinatura correspondente.
+    """
+    # 1) espaço antes
+    doc.add_paragraph()
+
+    # 3) monta lista de blocos só para as especialidades que batem
+    upper_sps = [s.upper() for s in specialties]
+    blocks = [
+        SIGNATURES[esp]
+        for esp in SIGNATURES
+        if esp in upper_sps
+    ]
+
+    # 4) se nada bateu, usa um fallback único
+    if not blocks:
+        blocks = [[
+            ("assinado eletronicamente", {"italic": True}),
+            ("SIMONE ULER LAVORATO",     {"bold": True}),
+            ("Psicóloga",                {}),
+            ("CRP 01/20631",             {}),
+        ]]
+
+    # 5) calcula quantas linhas são necessárias
+    rows = ceil(len(blocks) / cols)
+
+    # 6) cria tabela  rows×cols
+    table = doc.add_table(rows=rows, cols=cols)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.autofit = False
+
+    # 7) percorre cada bloco e preenche a célula correspondente
+    for idx, sig_block in enumerate(blocks):
+        row = idx // cols
+        col = idx % cols
+        cell = table.cell(row, col)
+
+        # injeta cada linha de assinatura dentro da célula
+        for text, style in sig_block:
+            p = cell.add_paragraph()
+            run = p.add_run(text)
+            run.font.size = Pt(font_size)
+            if style.get("bold"):
+                run.bold = True
+            if style.get("italic"):
+                run.italic = True
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 # Geradores de relatórios templates
 
@@ -301,7 +400,8 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
 
     add_fixed_signature_section(doc, "Brasília, data da assinatura digital.")
 
-    add_signature_section(doc, "pne")
+    # add_signature_section(doc, "pne")
+    build_signature_block_grid(doc, patient_data["especialidades"], cols=2)
 
     filename = f"Relatório_PNE_{patient_data['info']['nome'].replace(' ', '_')}.docx"
     filepath = os.path.join(output_dir, filename)
@@ -437,7 +537,8 @@ def generate_tipico_report(patient_data: Dict[str, Any], output_dir: str) -> Non
 
     add_fixed_signature_section(doc, "Brasília, data da assinatura digital.")
 
-    add_signature_section(doc, "tipico")
+    # add_signature_section(doc, "tipico")
+    build_signature_block_grid(doc, patient_data["especialidades"], cols=2)
 
     filename = f"Relatório_Típico_{patient_data['info']['nome'].replace(' ', '_')}.docx"
     filepath = os.path.join(output_dir, filename)

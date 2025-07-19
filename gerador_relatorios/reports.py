@@ -48,6 +48,12 @@ SIGNATURES: dict[str, list[tuple[str, dict[str, bool]]]] = {
         ("Psicopedagoga", {}),
         ("CRP 01/20631", {})
     ],
+    "NUTRIÇÃO": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("RAIANE ALVES ROCHA", {"bold": True}),
+        ("Nutricionista", {}),
+        ("CRN 17753", {})
+    ]
 }
 
 # Métodos para moldar os templates
@@ -218,6 +224,29 @@ def build_signature_block_grid(
                 run.italic = True
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
+
+def add_unordered_list_with_styling(
+        doc: Document,
+        items: list[list[tuple[str, dict]]],
+        indent_level: int = 0,
+        space_before: Pt = Pt(6),
+        space_after: Pt = Pt(6)
+    ):
+        for item_parts in items:
+            p = doc.add_paragraph(style="List Bullet")
+            p.paragraph_format.left_indent = Pt(indent_level * 12)
+            p.paragraph_format.space_before = space_before
+            p.paragraph_format.space_after = space_after
+
+            for text, style in item_parts:
+                run = p.add_run(text)
+                if style.get("bold"):
+                    run.bold = True
+                if style.get("italic"):
+                    run.italic = True
+                if style.get("underline"):
+                    run.underline = True
+
 # Geradores de relatórios templates
 
 def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
@@ -241,10 +270,47 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
         "Transtorno do Espectro Autista, conforme critérios do DSM-5. "
         "Apresentando prejuízos significativos na comunicação social e "
         "comportamentos restritos e repetitivos, necessitando de apoio "
-        "substancial em múltiplas áreas do desenvolvimento.",
+        "substancial em múltiplas áreas do desenvolvimento. A intervenção "
+        "nutricional é essencial para abordar questões alimentares específicas.",
     )
 
     especialidades_encontradas = [esp.upper() for esp in patient_data["especialidades"]]
+
+    if any("NUTRI" in esp or "NUTRIÇÃO" in esp for esp in especialidades_encontradas):
+        add_section_title(doc, "Evolução", Pt(16), Pt(8))
+        add_section_text(
+            doc,
+            "Desde o início do acompanhamento em terapia alimentar, observa-se progresso gradual na aceitação de novos alimentos, bem como aumento da tolerância a diferentes texturas, cores e temperaturas. O paciente tem apresentado maior disponibilidade para explorar o ambiente alimentar de forma positiva, com redução de comportamentos de recusa extrema ou esquiva. Em contextos estruturados e com suporte terapêutico, verifica-se participação mais ativa durante exposições alimentares e maior engajamento nas atividades propostas. Em casos infantis, o uso de estratégias lúdicas, modelagem e reforçamento positivo tem sido eficaz na promoção de avanços. Em pacientes adolescentes e adultos, nota-se maior consciência sobre suas dificuldades e disposição para experimentar novas abordagens comportamentais e cognitivas ligadas à alimentação.",
+        )
+    
+    if any("FISIO" in esp or "FISIOTERAPIA" in esp for esp in especialidades_encontradas):
+        add_section_title(doc, "Evolução Terapêutica", Pt(16), Pt(8))
+        add_section_text(
+            doc,
+            "Desde o início do acompanhamento fisioterapêutico, observa-se progressos graduais na adaptação a estímulos motores e na aceitação de novas abordagens corporais. O paciente demonstra:"
+        )
+        add_unordered_list_with_styling(
+            [
+                {"Melhora na coordenação motora global", {"bold": True}},
+                {"e na participação em atividades estruturadas."},
+            ],
+            [
+                {"Aumento da tolerância sensorial,", {"bold": True}},
+                {"com menor resistência a toques e manipulações terapêuticas."},
+            ],
+            [
+                {"Maior engajamento em exercícios posturais e proprioceptivos,", {"bold": True}},
+                {"favorecendo a consciência corporal e o equilíbrio."}
+            ],
+            [
+                {"Diminuição de comportamentos de esquiva e recusa extrema,", {"bold": True}},
+                {"tornando-se mais receptivo ao contato físico e às estratégias de intervenção"}
+            ]
+        )
+        add_section_text(
+            doc,
+            "Nos atendimentos infantis, a fisioterapia tem sido realizada por meio de estratégias lúdicas, modelagem motora e reforço positivo. Em pacientes adolescentes e adultos, nota-se um avanço na percepção das próprias dificuldades e maior disposição para experimentar técnicas adaptativas."
+        )
 
     if any("ABA" in esp or "TERAPIA ABA" in esp for esp in especialidades_encontradas):
         add_specialty_section(
@@ -321,6 +387,23 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
 
     add_section_title(doc, "Programação Terapêutica Atual", Pt(30), Pt(12))
 
+    if any("FISIO" in esp or "FISIOTERAPIA" in esp for esp in especialidades_encontradas):
+        add_section_text(
+            doc,
+            "O plano de intervenção fisioterapêutico visa:"
+        )
+        add_unordered_list_with_styling(
+            [
+                {"Ampliar o repertório motor e funcional,", {"bold": True}},
+                {"promovendo maior independência nas atividades diárias."},
+            ],
+            [
+                {"Reduzir a ansiedade associada a estímulos físicos,", {"bold": True}},
+                {"facilitando a interação com o ambiente e com e objetos táteis."},
+            ]
+        )
+        
+
     if any("ABA" in esp or "TERAPIA ABA" in esp for esp in especialidades_encontradas):
         add_section_title(doc, "Terapia ABA", Pt(16), Pt(8))
         add_section_text(
@@ -381,22 +464,34 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
             "matemática e resolução de problemas. O plano também inclui o fortalecimento "
             "da autoestima escolar e o apoio no planejamento e organização do tempo.",
         )
+    
+    if any("NUTRI" in esp or "NUTRIÇÃO" in esp for esp in especialidades_encontradas):
+        add_section_text(
+            doc,
+            "A intervenção segue com o objetivo de ampliar o repertório alimentar, reduzir a ansiedade associada à alimentação e favorecer a construção de uma relação mais funcional e saudável com os alimentos. As estratégias utilizadas incluem: exposição gradual a novos alimentos, dessensibilização sistemática, treino de habilidades de enfrentamento, uso de reforçadores, orientação nutricional (em parceria com outros profissionais) e envolvimento familiar. O planejamento terapêutico é individualizado, levando em consideração as preferências, o histórico alimentar e os fatores sensoriais e emocionais que impactam a alimentação do paciente. O vínculo terapêutico tem sido essencial para a manutenção do engajamento e para a superação de resistências naturais do processo.",
+        )
 
     add_section_title(doc, "Considerações Finais", Pt(30), Pt(12))
-    add_section_text(
-        doc,
-        "A paciente segue em acompanhamento com evolução positiva. O trabalho "
-        "conjunto entre as especialidades tem favorecido ganhos significativos e "
-        "generalização das habilidades desenvolvidas para diferentes ambientes. "
-        "Recomendamos a continuidade do atendimento terapêutico e o envolvimento "
-        "da família e/ou escola no processo.",
-    )
-    add_section_text(
-        doc,
-        "Nos colocamos à disposição para esclarecimentos sobre o processo "
-        "terapêutico, bem como para oferecer orientações e suporte sempre que "
-        "necessário, respeitando os limites éticos da atuação clínica.",
-    )
+    if not(any("NUTRI" in esp or "NUTRIÇÃO" in esp for esp in especialidades_encontradas)):
+        add_section_text(
+            doc,
+            "A paciente segue em acompanhamento com evolução positiva. O trabalho "
+            "conjunto entre as especialidades tem favorecido ganhos significativos e "
+            "generalização das habilidades desenvolvidas para diferentes ambientes. "
+            "Recomendamos a continuidade do atendimento terapêutico e o envolvimento "
+            "da família e/ou escola no processo.",
+        )
+        add_section_text(
+            doc,
+            "Nos colocamos à disposição para esclarecimentos sobre o processo "
+            "terapêutico, bem como para oferecer orientações e suporte sempre que "
+            "necessário, respeitando os limites éticos da atuação clínica.",
+        )
+    else:
+        add_section_text(
+            doc,
+            "Recomenda-se a continuidade da terapia alimentar, com envolvimento ativo da família e, quando possível, articulação com a equipe multidisciplinar (psicólogos, nutricionistas, fonoaudiólogos, terapeutas ocupacionais, entre outros). A consistência das intervenções em diferentes ambientes (casa, escola, clínica) é fundamental para a generalização dos progressos alcançados. O processo terapêutico tem se mostrado eficaz na promoção de avanços alimentares, fortalecimento da autonomia do paciente e melhoria na qualidade de vida.\n\nNos colocamos à disposição para esclarecimentos sobre o processo terapêutico, bem como para oferecer orientações e suporte sempre que necessário, respeitando os limites éticos da atuação clínica.",
+        )
 
     add_fixed_signature_section(doc, "Brasília, data da assinatura digital.")
 
@@ -409,6 +504,12 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
 
 
 def generate_tipico_report(patient_data: Dict[str, Any], output_dir: str) -> None:
+    if any("NUTRI" in esp or "NUTRIÇÃO" in esp for esp in patient_data["especialidades"]):
+        raise ValueError("Fusex Típico não contempla NUTRIÇÃO.")
+    
+    if any("FISIO" in esp or "FISIOTERAPIA" in esp for esp in patient_data["especialidades"]):
+        raise ValueError("Fusex Típico não contempla FISIOTERAPIA.")
+    
     try:
         papel_timbrado = resource_path("papel timbrado.docx")
         doc = Document(papel_timbrado)

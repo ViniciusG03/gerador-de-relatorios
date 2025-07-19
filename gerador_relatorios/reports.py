@@ -53,6 +53,12 @@ SIGNATURES: dict[str, list[tuple[str, dict[str, bool]]]] = {
         ("RAIANE ALVES ROCHA", {"bold": True}),
         ("Nutricionista", {}),
         ("CRN 17753", {})
+    ],
+    "FISIOTERAPIA": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("ANI CAROLINE BARBOSA NUNES", {"bold": True}),
+        ("Fisioterapeuta", {}),
+        ("CREFITO 397091", {})
     ]
 }
 
@@ -226,26 +232,31 @@ def build_signature_block_grid(
 
 
 def add_unordered_list_with_styling(
-        doc: Document,
-        items: list[list[tuple[str, dict]]],
-        indent_level: int = 0,
-        space_before: Pt = Pt(6),
-        space_after: Pt = Pt(6)
-    ):
-        for item_parts in items:
-            p = doc.add_paragraph(style="List Bullet")
-            p.paragraph_format.left_indent = Pt(indent_level * 12)
-            p.paragraph_format.space_before = space_before
-            p.paragraph_format.space_after = space_after
+         doc: Document,
+    items: list[list[tuple[str, dict]]],
+    bullet_char: str = "•",
+    indent: Pt = Pt(12),
+    space_before: Pt = Pt(6),
+    space_after: Pt = Pt(6)
+):
+    for item_parts in items:
+        p = doc.add_paragraph()
+        p.paragraph_format.left_indent = indent
+        p.paragraph_format.space_before = space_before
+        p.paragraph_format.space_after = space_after
 
-            for text, style in item_parts:
-                run = p.add_run(text)
-                if style.get("bold"):
-                    run.bold = True
-                if style.get("italic"):
-                    run.italic = True
-                if style.get("underline"):
-                    run.underline = True
+        # Adiciona o bullet manualmente
+        bullet_run = p.add_run(f"{bullet_char} ")
+        bullet_run.bold = True
+
+        for text, style in item_parts:
+            run = p.add_run(text)
+            if style.get("bold"):
+                run.bold = True
+            if style.get("italic"):
+                run.italic = True
+            if style.get("underline"):
+                run.underline = True
 
 # Geradores de relatórios templates
 
@@ -284,28 +295,31 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
         )
     
     if any("FISIO" in esp or "FISIOTERAPIA" in esp for esp in especialidades_encontradas):
-        add_section_title(doc, "Evolução Terapêutica", Pt(16), Pt(8))
+        add_section_title(doc, "FISIOTERAPIA", Pt(16), Pt(8))
         add_section_text(
             doc,
             "Desde o início do acompanhamento fisioterapêutico, observa-se progressos graduais na adaptação a estímulos motores e na aceitação de novas abordagens corporais. O paciente demonstra:"
         )
         add_unordered_list_with_styling(
+            doc,
             [
-                {"Melhora na coordenação motora global", {"bold": True}},
-                {"e na participação em atividades estruturadas."},
+                [
+                    ("Melhora na coordenação motora global", {"bold": True}),
+                    (" e na participação em atividades estruturadas.", {}),
+                ],
+                [
+                    ("Aumento da tolerância sensorial, ", {"bold": True}),
+                    ("com menor resistência a toques e manipulações terapêuticas.", {}),
+                ],
+                [
+                    ("Maior engajamento em exercícios posturais e proprioceptivos, ", {"bold": True}),
+                    ("favorecendo a consciência corporal e o equilíbrio.", {}),
+                ],
+                [
+                    ("Diminuição de comportamentos de esquiva e recusa extrema, ", {"bold": True}),
+                    ("tornando-se mais receptivo ao contato físico e às estratégias de intervenção.", {}),
+                ]
             ],
-            [
-                {"Aumento da tolerância sensorial,", {"bold": True}},
-                {"com menor resistência a toques e manipulações terapêuticas."},
-            ],
-            [
-                {"Maior engajamento em exercícios posturais e proprioceptivos,", {"bold": True}},
-                {"favorecendo a consciência corporal e o equilíbrio."}
-            ],
-            [
-                {"Diminuição de comportamentos de esquiva e recusa extrema,", {"bold": True}},
-                {"tornando-se mais receptivo ao contato físico e às estratégias de intervenção"}
-            ]
         )
         add_section_text(
             doc,
@@ -388,19 +402,10 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
     add_section_title(doc, "Programação Terapêutica Atual", Pt(30), Pt(12))
 
     if any("FISIO" in esp or "FISIOTERAPIA" in esp for esp in especialidades_encontradas):
-        add_section_text(
+        add_specialty_section(
             doc,
-            "O plano de intervenção fisioterapêutico visa:"
-        )
-        add_unordered_list_with_styling(
-            [
-                {"Ampliar o repertório motor e funcional,", {"bold": True}},
-                {"promovendo maior independência nas atividades diárias."},
-            ],
-            [
-                {"Reduzir a ansiedade associada a estímulos físicos,", {"bold": True}},
-                {"facilitando a interação com o ambiente e com e objetos táteis."},
-            ]
+            "Fisioterapia",
+            "O plano fisioterapêutico busca ampliar o repertório motor e funcional do paciente, promovendo maior independência nas atividades diárias. Atua na redução da ansiedade frente a estímulos físicos, melhora da coordenação, equilíbrio, mobilidade e integração sensorial. São utilizadas técnicas específicas como alongamento, fortalecimento e estratégias lúdicas. A abordagem é individualizada e conta com apoio de equipe multidisciplinar. O vínculo terapêutico é essencial para o engajamento contínuo."
         )
         
 

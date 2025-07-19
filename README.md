@@ -1,10 +1,11 @@
-# 🏥 Gerador de Relatórios FUSEX
+# 🏥 Gerador de Relatórios FUSEX v2.0
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Tkinter](https://img.shields.io/badge/GUI-Tkinter-green.svg)](https://docs.python.org/3/library/tkinter.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/ViniciusG03/gerador-de-relatorios)](https://github.com/ViniciusG03/gerador-de-relatorios/releases)
 
-Um aplicativo desktop para automação da geração de relatórios médicos padronizados para o convênio FUSEX, desenvolvido em Python com interface gráfica intuitiva.
+Um aplicativo desktop para automação da geração de relatórios médicos padronizados para o convênio FUSEX, desenvolvido em Python com interface gráfica intuitiva. Agora na versão 2.0 com suporte expandido para mais especialidades.
 
 ## ✨ Funcionalidades
 
@@ -12,15 +13,19 @@ Um aplicativo desktop para automação da geração de relatórios médicos padr
 - 👤 **Relatórios Típicos** - Para desenvolvimento típico
 - 📊 **Importação Excel** - Carrega dados de planilhas `.xlsx` e `.xls`
 - 👁️ **Preview dos Dados** - Visualização prévia antes da geração
-- 🎯 **Múltiplas Especialidades** - Suporte para:
+- 🎯 **Múltiplas Especialidades** - Suporte expandido para:
   - Terapia ABA
   - Psicoterapia
   - Terapia Ocupacional
   - Fonoaudiologia
   - Psicomotricidade
   - Psicopedagogia
+  - **🆕 Nutrição** - Relatórios especializados para terapia alimentar
+  - **🆕 Fisioterapia** - Evolução e programação fisioterapêutica
 - 📄 **Papel Timbrado** - Documentos com formatação profissional
 - 🚀 **Geração em Lote** - Múltiplos relatórios de uma vez
+- **🆕 Sistema de Assinaturas** - Assinaturas digitais específicas por especialidade
+- **🆕 Listas com Formatação** - Bullets e formatação aprimorada nos relatórios
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -41,16 +46,24 @@ Um aplicativo desktop para automação da geração de relatórios médicos padr
 
 ```bash
 Python 3.8+
-pip install pandas python-docx openpyxl
+pip install -r requirements.txt
 ```
+
+**Dependências principais:**
+
+- `pandas` - Manipulação de dados Excel
+- `python-docx` - Geração de documentos Word
+- `openpyxl` - Leitura de arquivos Excel
+- `pytest` - Testes unitários (opcional)
 
 ## 🚀 Instalação e Uso
 
 ### Opção 1: Executável (Recomendado)
 
-1. Baixe o arquivo `GERADOR_FUSEX_v1.0.zip` da seção [Releases](../../releases)
-2. Extraia o arquivo em qualquer pasta
-3. Execute `Gerador_Relatorios_FUSEX_v1.0.exe`
+1. Acesse a página de [Releases](https://github.com/ViniciusG03/gerador-de-relatorios/releases)
+2. Baixe a versão mais recente (`GERADOR_FUSEX_v2.0.zip`)
+3. Extraia o arquivo em qualquer pasta
+4. Execute `Gerador_Relatorios_FUSEX_v2.0.exe`
 
 ### Opção 2: Código Fonte
 
@@ -60,7 +73,7 @@ git clone https://github.com/ViniciusG03/gerador-de-relatorios.git
 cd gerador-de-relatorios
 
 # Instale as dependências
-pip install pandas python-docx openpyxl
+pip install -r requirements.txt
 
 # Execute o aplicativo
 python main.py
@@ -85,6 +98,8 @@ NOME                | DATA DE NASCIMENTO | RESPONSÁVEL        | ESPECIALIDADE  
 João Silva Santos  | 15/03/2010        | Maria Silva Santos | Psicoterapia       | Janeiro/2025
 João Silva Santos  | 15/03/2010        | Maria Silva Santos | Terapia ABA        | Janeiro/2025
 Ana Costa Lima     | 22/08/2015        | Carlos Costa Lima  | Fonoaudiologia     | Janeiro/2025
+Pedro Oliveira     | 10/12/2018        | Lucia Oliveira     | Fisioterapia       | Janeiro/2025
+Sofia Mendes       | 05/07/2020        | Rafael Mendes      | Nutrição           | Janeiro/2025
 ```
 
 ## 🎯 Como Usar
@@ -120,6 +135,8 @@ Ana Costa Lima     | 22/08/2015        | Carlos Costa Lima  | Fonoaudiologia    
 📂 Pasta_Escolhida/
 ├── 📄 Relatório_PNE_João_Silva_Santos.docx
 ├── 📄 Relatório_PNE_Ana_Costa_Lima.docx
+├── 📄 Relatório_PNE_Pedro_Oliveira.docx
+├── 📄 Relatório_PNE_Sofia_Mendes.docx
 └── 📄 Relatório_Típico_Carlos_Mendes.docx
 ```
 
@@ -128,13 +145,22 @@ Ana Costa Lima     | 22/08/2015        | Carlos Costa Lima  | Fonoaudiologia    
 ```
 gerador-de-relatorios/
 ├── 📄 main.py                    # Código principal
+├── 📄 requirements.txt           # Dependências do projeto
 ├── 📄 fusex_tipico.xlsx          # Planilha de exemplo
 ├── 📄 papel timbrado.docx        # Template do papel timbrado
-├── 📄 Gerador_Relatorios_FUSEX_v1.0.spec  # Config PyInstaller
+├── � gerador_relatorios/        # Módulo principal
+│   ├── 📄 __init__.py
+│   ├── 📄 data_loader.py         # Carregamento de dados Excel
+│   ├── 📄 gui.py                 # Interface gráfica
+│   ├── 📄 reports.py             # Geração de relatórios
+│   └── 📄 utils.py               # Utilitários
+├── 📂 tests/                     # Testes unitários
+│   ├── 📄 test_data_loader.py
+│   └── 📄 test_reports.py
 ├── 📂 build/                     # Arquivos de build
 ├── 📂 dist/                      # Executável gerado
-└── 📂 GERADOR_FUSEX_v1.0/        # Versão distribuição
-    ├── 📄 Gerador_Relatorios_FUSEX_v1.0.exe
+└── 📂 GERADOR_FUSEX_v2.0/        # Versão distribuição
+    ├── 📄 Gerador_Relatorios_FUSEX_v2.0.exe
     ├── 📄 fusex_exemplo.xlsx
     └── 📄 LEIA-ME.txt
 ```
@@ -154,7 +180,18 @@ Substitua o arquivo `papel timbrado.docx` por seu modelo personalizado.
 
 ### Especialidades
 
-Adicione novas especialidades modificando as verificações de especialidade no código.
+Adicione novas especialidades modificando o dicionário `SIGNATURES` no arquivo `reports.py`:
+
+```python
+SIGNATURES = {
+    "NOVA_ESPECIALIDADE": [
+        ("assinado eletronicamente", {"italic": True}),
+        ("NOME DO PROFISSIONAL", {"bold": True}),
+        ("Titulo Profissional", {}),
+        ("Numero Registro", {})
+    ]
+}
+```
 
 ## 🐛 Solução de Problemas
 
@@ -175,6 +212,11 @@ Adicione novas especialidades modificando as verificações de especialidade no 
 - Verifique se há espaço suficiente na pasta de destino
 - Confirme se você tem permissões de escrita na pasta
 
+**❌ "Fusex Típico não contempla NUTRIÇÃO/FISIOTERAPIA"**
+
+- Estas especialidades estão disponíveis apenas em relatórios PNE
+- Para Fusex Típico, use outras especialidades disponíveis
+
 ### Logs de Erro:
 
 Os erros são exibidos em janelas de diálogo. Para mais detalhes, execute pelo terminal:
@@ -193,11 +235,30 @@ python main.py
 
 ## 📝 Changelog
 
-### v1.0 (Atual)
+### v2.0 (Atual) - Novembro 2024
+
+**🆕 Novas Funcionalidades:**
+
+- ✅ Suporte completo para **Fisioterapia** (apenas PNE)
+- ✅ Suporte completo para **Nutrição** (apenas PNE)
+- ✅ Sistema de assinaturas digitais por especialidade
+- ✅ Listas com bullets e formatação aprimorada
+- ✅ Evolução específica para cada especialidade
+- ✅ Melhoria na estrutura de código com módulos separados
+- ✅ Sistema de testes automatizados
+
+**🔧 Melhorias:**
+
+- ✅ Refinamento na geração de relatórios PNE
+- ✅ Validação de especialidades por tipo de relatório
+- ✅ Interface mais robusta e informativa
+- ✅ Documentação expandida
+
+### v1.0 - Lançamento Inicial
 
 - ✅ Interface gráfica intuitiva
 - ✅ Geração de relatórios PNE e Típicos
-- ✅ Suporte a múltiplas especialidades
+- ✅ Suporte a 6 especialidades básicas
 - ✅ Importação de planilhas Excel
 - ✅ Preview de dados
 - ✅ Geração em lote
@@ -217,12 +278,37 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 Para dúvidas, problemas ou sugestões:
 
-- 🐛 Abra uma [Issue](../../issues)
-- 💬 Entre em contato via GitHub
+- 🐛 Abra uma [Issue](https://github.com/ViniciusG03/gerador-de-relatorios/issues)
+- � Baixe a versão mais recente nas [Releases](https://github.com/ViniciusG03/gerador-de-relatorios/releases)
+- �💬 Entre em contato via GitHub
+
+### 📊 Estatísticas do Projeto
+
+- 🎯 **8 Especialidades** suportadas
+- 📋 **2 Tipos** de relatórios (PNE e Típico)
+- 🧪 **Testado** com pytest
+- 📦 **Empacotado** com PyInstaller
 
 ---
+
+## 📦 Instalação Rápida
+
+Para começar a usar o projeto rapidamente:
+
+```bash
+# Clonar o repositório
+git clone https://github.com/ViniciusG03/gerador-de-relatorios.git
+cd gerador-de-relatorios
+
+# Instalar dependências
+pip install -r requirements.txt
+
+# Executar aplicativo
+python main.py
+```
 
 <div align="center">
   <p>⭐ Se este projeto foi útil para você, considere dar uma estrela!</p>
   <p>Feito com ❤️ para automatizar relatórios médicos</p>
+  <p><strong>Versão 2.0 - Julho 2025</strong></p>
 </div>

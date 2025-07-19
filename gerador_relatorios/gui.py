@@ -146,6 +146,8 @@ class MedicalReportGenerator:
            • Fonoaudiologia
            • Psicomotricidade
            • Psicopedagogia
+           • Nutrição (apenas PNE)
+           • Fisioterapia (apenas PNE)
 
         📧 SUPORTE: Qualquer dúvida, entre em contato!
         """

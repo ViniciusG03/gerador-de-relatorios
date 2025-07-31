@@ -308,14 +308,14 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
                     (" e na participação em atividades estruturadas.", {}),
                 ],
                 [
-                    {"Maior engajamento em exercícios posturais e proprioceptivos,", {"bold": True}},
-                    {"favorecendo a consciência corporal e o equilíbrio."}
+                    ("Maior engajamento em exercícios posturais e proprioceptivos,", {"bold": True}),
+                    (" favorecendo a consciência corporal e o equilíbrio.", {}),
                 ],
                 [
-                    {"Diminuição de comportamentos de esquiva e recusa extrema,", {"bold": True}},
-                    {"tornando-se mais receptivo ao contato físico e às estratégias de intervenção"}
+                    ("Diminuição de comportamentos de esquiva e recusa extrema,", {"bold": True}),
+                    (" tornando-se mais receptivo ao contato físico e às estratégias de intervenção.", {}),
                 ],
-            ]
+            ],
         )
         add_section_text(
             doc,

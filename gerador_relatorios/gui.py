@@ -241,7 +241,9 @@ class MedicalReportGenerator:
                     "mes_referencia": str(row["MÊS DE REFERÊNCIA"]) if pd.notna(row["MÊS DE REFERÊNCIA"]) else "Não informado",
                 }
             if pd.notna(row["ESPECIALIDADE"]):
-                patient_data[nome]["especialidades"].append(str(row["ESPECIALIDADE"]))
+                especialidade = str(row["ESPECIALIDADE"])
+                if especialidade not in patient_data[nome]["especialidades"]:
+                    patient_data[nome]["especialidades"].append(especialidade)
 
         output_dir = filedialog.askdirectory(title="Selecionar pasta para salvar relatórios")
         if not output_dir:

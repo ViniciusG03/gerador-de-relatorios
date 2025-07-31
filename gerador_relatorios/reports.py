@@ -295,10 +295,6 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
                 {"e na participação em atividades estruturadas."},
             ],
             [
-                {"Aumento da tolerância sensorial,", {"bold": True}},
-                {"com menor resistência a toques e manipulações terapêuticas."},
-            ],
-            [
                 {"Maior engajamento em exercícios posturais e proprioceptivos,", {"bold": True}},
                 {"favorecendo a consciência corporal e o equilíbrio."}
             ],
@@ -309,7 +305,7 @@ def generate_pne_report(patient_data: Dict[str, Any], output_dir: str) -> None:
         )
         add_section_text(
             doc,
-            "Nos atendimentos infantis, a fisioterapia tem sido realizada por meio de estratégias lúdicas, modelagem motora e reforço positivo. Em pacientes adolescentes e adultos, nota-se um avanço na percepção das próprias dificuldades e maior disposição para experimentar técnicas adaptativas."
+            "Nos atendimentos infantis, a fisioterapia tem sido conduzida por meio de estratégias lúdicas, modelagem motora e reforço positivo, respeitando as particularidades de cada criança e priorizando o desenvolvimento funcional."
         )
 
     if any("ABA" in esp or "TERAPIA ABA" in esp for esp in especialidades_encontradas):
